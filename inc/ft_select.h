@@ -20,9 +20,6 @@
 # include <stdio.h>
 # include <unistd.h>
 
-
-
 struct termios saved_attributes;
-
 
 #endif

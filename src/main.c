@@ -58,16 +58,18 @@ int		main (void)
   char		c;
   char		buff[1024];
 
+  //ft_bzero(buff, 1024);
   set_input_mode();
   while (1)
-    {
+  {
+    ft_bzero(buff, 1024);
 		read (STDIN_FILENO, &c, 1);
 		ft_strcat(buff, &c);
 		if (ft_strcmp(buff,"^[[A") == 0)
 			ft_putendl("UP");
 		else
 			putchar (c);
-    }
-
+  }
+  reset_input_mode();
   return EXIT_SUCCESS;
 }
