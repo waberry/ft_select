@@ -24,6 +24,7 @@ int		init_term()
 	return (0);
 }
 */
+
 void	reset_input_mode (void)
 {
   tcsetattr (STDIN_FILENO, TCSANOW, &saved_attributes);
@@ -53,23 +54,48 @@ void	set_input_mode (void)
   tcsetattr (STDIN_FILENO, TCSAFLUSH, &tattr);
 }
 
-int		main (void)
+size_t    wcharlen(char c)
 {
-  char		c;
-  char		buff[1024];
+  if (c == 27)
+    return (5);
+  if ((c & 0xF0) == 0xF0)
+    return (4);
+  else if ((c & 0xE0) == 0xE0)
+    return (3);
+  else if ((c & 0xC0) == 0xC0)
+    return (2);
+  return (1);
+}
 
-  //ft_bzero(buff, 1024);
+int		main (int ac, char ** av)
+{
+  long    buffer;
+  int     ret;
+  ssize_t j;
+
+  if (ac <= 1 || av == NULL)
+    return -1;
+  int i = 1;
+  while (i < ac)
+  {
+    if (i%3 == 0)
+      ft_putchar('\n');
+    ft_putstr(av[i]);
+    ft_putchar(' ');
+    ++i;
+  }
+  ret = 0;
   set_input_mode();
   while (1)
   {
-    ft_bzero(buff, 1024);
-		read (STDIN_FILENO, &c, 1);
-		ft_strcat(buff, &c);
-		if (ft_strcmp(buff,"^[[A") == 0)
-			ft_putendl("UP");
-		else
-			putchar (c);
+    buffer = 0;
+    j = read(0, &buffer, 1);
+    if (j != 1)
+      j += read(0, (char *)(&buffer) + 1, wcharlen(buffer) - 1);
+    ft_putchar(buffer);
+
   }
+  //ft_bzero(buff, 1024);
   reset_input_mode();
   return EXIT_SUCCESS;
 }
